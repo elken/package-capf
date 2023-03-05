@@ -31,9 +31,14 @@ Not recommended to use this setting with the global completion list."
   :type 'boolean
   :group 'cape-use-package)
 
-(defcustom cape-use-package-annotation-icon t
-  "Set to non-nil to use an icon as the annotation."
+(defcustom cape-use-package-annotation "  "
+  "Set the annotation to use. Defaults to a package."
   :type 'boolean
+  :group 'cape-use-package)
+
+(defcustom cape-use-package-completion-symbols '(use-package use-package! package!)
+  "A list of symbols to complete against."
+  :type '(repeat symbol)
   :group 'cape-use-package)
 
 (defvar cape-use-package--candidates nil)
@@ -52,7 +57,7 @@ Not recommended to use this setting with the global completion list."
   cape-use-package--candidates)
 
 (defvar cape-use-package--properties
-  (list :annotation-function (lambda (_) (if cape-use-package-annotation-icon "  " " [pkg]"))
+  (list :annotation-function (lambda (_) cape-use-package-annotation)
         :company-kind (lambda (_) 'module)
         :exclusive 'no)
   "Completion extra properties for `cape-use-package'.")
@@ -62,11 +67,13 @@ Not recommended to use this setting with the global completion list."
   (interactive (list t))
   (if interactive
       (cape-interactive #'cape-use-package)
-    (when (string-prefix-p "use-package" (symbol-name (car (list-at-point))))
-     (let ((bounds (cape--bounds 'word)))
-       `(,(car bounds) ,(cdr bounds)
-         ,(cape--table-with-properties (cape-use-package--candidates) :category 'cape-use-package)
-         ,@cape-use-package--properties)))))
+    (when (and (list-at-point)
+               (member (car (list-at-point)) cape-use-package-completion-symbols)
+               (null (cddr (list-at-point))))
+      (let ((bounds (cape--bounds 'word)))
+        `(,(car bounds) ,(cdr bounds)
+          ,(cape--table-with-properties (cape-use-package--candidates) :category 'cape-use-package)
+          ,@cape-use-package--properties)))))
 
 (provide 'cape-use-package)
 ;;; cape-use-package.el ends here
