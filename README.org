@@ -1,38 +1,39 @@
-#+title: cape-use-package
+#+title: package-capf
 
-A simple [[https://github.com/minad/cape][cape]] (Completion-At-Point Extension) for completing Emacs package names
+A simple [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Completion-in-Buffers.html][capf]] (Completion-At-Point Function) for  completing Emacs package names
 from various sources.
+
 
 [[file:.github/assets/demo.gif]]
 
 * Install
 ** Manual
-Download somewhere and add to your =load-path= and add =cape-use-package= to =completion-at-point-functions=.
+Download somewhere and add to your =load-path= and add =package-capf= to =completion-at-point-functions=.
 ** TODO Doom
 Add the following lines to your relevant files
 
 =packages.el=
 #+begin_src emacs-lisp
-(package! cape-use-package
-  :recipe (:host github :repo "elken/cape-use-package"))
+(package! package-capf
+  :recipe (:host github :repo "elken/package-capf"))
 #+end_src
 
 =config.el=
 #+begin_src emacs-lisp
-(use-package! cape-use-package
+(use-package! package-capf
   :after cape
   :hook (emacs-lisp-mode . (lambda ()
                              (make-local-variable 'completion-at-point-functions)
-                             (add-to-list 'completion-at-point-functions #'cape-use-package))))
+                             (add-to-list 'completion-at-point-functions #'package-capf))))
 #+end_src
 
 * Configuration
 The following options are available to customise:
-** =cape-use-package-always-refetch=
+** =package-capf-always-refetch=
 By default, for obvious reasons, we don't update the list of available packages every time the completion is invoked. If this is desired, set this to be non-nil (and ensure your internet connection is able to handle it)
-** =cape-use-package-annotation=
+** =package-capf-annotation=
 Specify the annotation to use (defaults to   )
-** =cape-use-package-completion-symbols=
+** =package-capf-completion-symbols=
 A list of symbols to run the completion against.
 
-Will check if the =car= of the current form exists in that list and that the =cddr= is =nil= (which means we're at the second element in the list aka the package name)
+Will use this list to check if the current line contains the start of a valid recipe
